@@ -1,0 +1,30 @@
+html {
+    font-family: Arial;
+}
+p {
+    margin: 5px 0;
+}
+.contentWrapper {
+    display: none;
+}
+
+.chatWrapper, .chatUsers {
+    float: left;
+}
+
+.chat {
+    height: 300px;
+    max-width: 100%;
+    padding: 20px;
+    border: 2px solid #DDD;
+    overflow-y: scroll;
+    word-wrap: break-word;
+}
+
+.chatUsers__header {
+    margin: 0 10px 10px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}

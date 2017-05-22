@@ -1,0 +1,44 @@
+
+var express = require('express'),
+  app = express(),
+  http = require('http'),
+  server = http.createServer(app),
+  io = require('socket.io').listen(server),
+  nicknames = [];
+
+server.listen(3000);
+
+app.use(express.static(__dirname + '/src'));
+
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+
+io.sockets.on('connection', function(socket) {
+    socket.on('new user', function(data, callback){
+        if(nicknames.indexOf(data) != -1) {
+            callback(false);
+        } else {
+            callback(true);
+            socket.nickname = data;
+            nicknames.push(socket.nickname);
+            updateNickanmes();
+
+            socket.emit('join user', socket.nickname);
+        }
+    })
+
+    function updateNickanmes() {
+        io.sockets.emit('usernames', nicknames);
+    };
+
+    socket.on('send message', function(data) {
+        io.sockets.emit('new message', ({msg: data, nick: socket.nickname}));
+    });
+
+    socket.on('disconnect', function(data) {
+        if(!socket.nickname) return;
+        nicknames.splice(nicknames.indexOf(socket.nickname), 1);
+        updateNickanmes();
+    })
+})
